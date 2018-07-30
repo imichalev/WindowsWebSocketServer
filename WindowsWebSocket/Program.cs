@@ -6,14 +6,33 @@ using SuperSocket;
 using SuperWebSocket;
 using WindowsWebSocket;
 using System.Data.SqlClient;
+using System.Configuration;
+using System.Data.Common;
 
 namespace WindowsWebSocket
 {
     class Program
     {
+        //public string conn="Data Source=(LocalDB)\v11.0;AttachDbFilename="C:\Users\imihalev\Documents\Visual Studio 2013\WindowsWebSocketServer\WindowsWebSocket\loggerDatabase.mdf";
         public static WebSocketServer wsServer;
         static void Main(string[] args)
         {
+            string provider = ConfigurationManager.AppSettings["provider"];
+            string connectionString = ConfigurationManager.AppSettings["connectionString"];
+            DbProviderFactory factory = DbProviderFactories.GetFactory(provider);
+            using (DbConnection connection = factory.CreateConnection())
+            {
+                if (connection == null)
+                {
+                    Console.WriteLine("Coonnection to Database error.");
+                    Console.ReadLine();
+                    return;
+                }
+                connection.ConnectionString = connectionString;
+                connection.Open();
+
+            }
+
             wsServer = new WebSocketServer();
             int port = 8080;
             wsServer.Setup(port);
