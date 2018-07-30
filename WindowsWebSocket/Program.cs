@@ -33,6 +33,13 @@ namespace WindowsWebSocket
                     "SELECT COUNT(*) FROM Logger",dbCon);
                 int count = (int)command.ExecuteScalar();
                 Console.WriteLine("I have {0} counts.", count);
+            
+                command = dbCon.CreateCommand();
+                command.CommandText="INSERT INTO Logger(rtc,temperature) VALUES(@param1,@param2)";
+                long rtc = DateTime.Now.TimeOfDay.Ticks;
+                command.Parameters.Add("@param1", System.Data.SqlDbType.Decimal).Value = rtc;
+                command.Parameters.Add("@param2", System.Data.SqlDbType.Float).Value = 30.6;
+                command.ExecuteNonQuery();
             }
 
             //DbProviderFactory factory = DbProviderFactories.GetFactory(provider);
