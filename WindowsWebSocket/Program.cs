@@ -5,7 +5,7 @@ using System.Text;
 using SuperSocket;
 using SuperWebSocket;
 using WindowsWebSocket;
-
+using System.Data.SqlClient;
 
 namespace WindowsWebSocket
 {
