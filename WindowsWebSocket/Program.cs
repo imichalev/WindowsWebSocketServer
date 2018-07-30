@@ -19,19 +19,34 @@ namespace WindowsWebSocket
         {
             string provider = ConfigurationManager.AppSettings["provider"];
             string connectionString = ConfigurationManager.AppSettings["connectionString"];
-            DbProviderFactory factory = DbProviderFactories.GetFactory(provider);
-            using (DbConnection connection = factory.CreateConnection())
+            SqlConnection dbCon = new SqlConnection(connectionString);
+            dbCon.Open();
+            if (dbCon == null)
             {
-                if (connection == null)
-                {
-                    Console.WriteLine("Coonnection to Database error.");
-                    Console.ReadLine();
-                    return;
-                }
-                connection.ConnectionString = connectionString;
-                connection.Open();
-
+                Console.WriteLine("Coonnection to Database error.");
+                Console.ReadLine();
+                return;
             }
+            using (dbCon)
+            {
+                SqlCommand command = new SqlCommand(
+                    "SELECT COUNT(*) FROM Logger",dbCon);
+                int count = (int)command.ExecuteScalar();
+                Console.WriteLine("I have {0} counts.", count);
+            }
+
+            //DbProviderFactory factory = DbProviderFactories.GetFactory(provider);
+            //using (DbConnection connection = factory.CreateConnection())
+            //{
+            //    if (connection == null)
+            //    {
+            //        Console.WriteLine("Coonnection to Database error.");
+            //        Console.ReadLine();
+            //        return;
+            //    }
+            //    connection.ConnectionString = connectionString;
+            //    connection.Open();
+            //}
 
             wsServer = new WebSocketServer();
             int port = 8080;
